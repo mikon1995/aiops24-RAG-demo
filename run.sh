@@ -3,6 +3,8 @@
 # download embedding model
 git clone https://www.modelscope.cn/AI-ModelScope/bge-small-zh-v1.5.git demo/BAAI/bge-small-zh-v1.5
 
+git clone https://www.modelscope.cn/AI-ModelScope/bge-reranker-v2-m3.git demo/BAAI/bge-reranker-v2-m3
+
 # download dataset
 git clone https://www.modelscope.cn/datasets/issaccv/aiops2024-challenge-dataset.git demo/dataset
 
