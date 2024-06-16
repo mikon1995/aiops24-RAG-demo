@@ -10,7 +10,7 @@ from tqdm.asyncio import tqdm
 from pipeline.ingestion import build_pipeline, build_vector_store, read_data
 from pipeline.qa import read_jsonl, save_answers
 from pipeline.rag import QdrantRetriever, generation_with_knowledge_retrieval
-from llama_index.core.postprocessor.types import BaseNodePostprocessor
+from llama_index.core.postprocessor import SentenceTransformerRerank
 import argparse
 from custom.template import QA_TEMPLATES
 
@@ -32,6 +32,9 @@ async def main():
     args = parser.parse_args()
     config = dotenv_values(".env")
     config["COLLECTION_NAME"] += '_' + args.emd
+    reranker = None
+    if args.use_reranker:
+        reranker = SentenceTransformerRerank(top_n=2, model='BAAI/bge-reranker-v2-m3')
     qa_template = QA_TEMPLATES[args.qat_idx]
     # 初始化 LLM 嵌入模型 和 Reranker
     llm = OpenAI(
@@ -80,7 +83,7 @@ async def main():
     results = []
     for query in tqdm(queries, total=len(queries)):
         result = await generation_with_knowledge_retrieval(
-            query["query"], retriever, llm, qa_template=qa_template, reranker=BaseNodePostprocessor if args.use_reranker else None
+            query["query"], retriever, llm, qa_template=qa_template, reranker=reranker,
         )
         results.append(result)
 

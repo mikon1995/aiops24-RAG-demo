@@ -197,6 +197,6 @@ demo/BAAI/
 
 demo/data/
 demo/dataset/
-demo/.lock/
+demo/.locks/
 .idea
 demo/.DS_Store
