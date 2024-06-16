@@ -12,6 +12,7 @@ from pipeline.qa import read_jsonl, save_answers
 from pipeline.rag import QdrantRetriever, generation_with_knowledge_retrieval
 from llama_index.core.postprocessor.types import BaseNodePostprocessor
 import argparse
+from custom.template import QA_TEMPLATES
 
 all_emds = {
     'BAAI': {'name': 'BAAI/bge-small-zh-v1.5', 'dim': 128},
@@ -26,10 +27,12 @@ async def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-emd', type=str, default='BAAI')
     parser.add_argument('-r_top_k', type=int, default=3)
+    parser.add_argument('-qat_idx', type=int, default=0)
     parser.add_argument('--use_reranker', action='store_true')
     args = parser.parse_args()
     config = dotenv_values(".env")
-
+    config["COLLECTION_NAME"] += '_' + args.emd
+    qa_template = QA_TEMPLATES[args.qat_idx]
     # 初始化 LLM 嵌入模型 和 Reranker
     llm = OpenAI(
         api_key=config["GLM_KEY"],
@@ -77,12 +80,12 @@ async def main():
     results = []
     for query in tqdm(queries, total=len(queries)):
         result = await generation_with_knowledge_retrieval(
-            query["query"], retriever, llm, BaseNodePostprocessor if args.use_reranker else None
+            query["query"], retriever, llm, qa_template=qa_template, reranker=BaseNodePostprocessor if args.use_reranker else None
         )
         results.append(result)
 
     # 处理结果
-    save_answers(queries, results, f"{args.emd}_{args.r_top_k}_submit_result.jsonl")
+    save_answers(queries, results, f"{args.qat_idx}_{args.emd}_{args.r_top_k}_submit_result.jsonl")
 
 
 if __name__ == "__main__":

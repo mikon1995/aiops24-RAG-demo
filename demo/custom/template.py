@@ -12,6 +12,9 @@ QA_TEMPLATE = """\
     回答：\
     """
 
+QA_TEMPLATES = {
+    0: QA_TEMPLATE
+}
 
 SUMMARY_EXTRACT_TEMPLATE = """\
     这是这一小节的内容：
