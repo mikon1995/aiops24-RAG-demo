@@ -15,13 +15,13 @@ import argparse
 from custom.template import QA_TEMPLATES
 
 all_emds = {
-    'BAAI': {'name': 'BAAI/bge-small-zh-v1.5', 'dim': 128},
-    'BAAI-L': {'name': 'BAAI/bge-large-zh-v1.5', 'dim': 512},
-    'GTE-L': {'name': 'thenlper/gte-large-zh', 'dim': 1024},
-    'GTE-B': {'name': 'thenlper/gte-base-zh', 'dim': 512},
-    'SENSE-L-v2': {'name': 'sensenova/piccolo-large-zh-v2', 'dim': 1792},
-    'SENSE-L': {'name': 'sensenova/piccolo-large-zh', 'dim': 1024},
-    'SENSE-B': {'name': 'sensenova/piccolo-base-zh', 'dim': 768},
+    'BAAI': 'BAAI/bge-small-zh-v1.5',
+    'BAAI-L': 'BAAI/bge-large-zh-v1.5',
+    'GTE-L': 'thenlper/gte-large-zh',
+    'GTE-B': 'thenlper/gte-base-zh',
+    # 'SENSE-L-v2': {'name': 'sensenova/piccolo-large-zh-v2', 'dim': 1792},
+    # 'SENSE-L': {'name': 'sensenova/piccolo-large-zh', 'dim': 1024},
+    # 'SENSE-B': {'name': 'sensenova/piccolo-base-zh', 'dim': 768},
 }
 async def main():
     parser = argparse.ArgumentParser()
@@ -41,9 +41,9 @@ async def main():
         is_chat_model=True,
     )
     embeding = HuggingFaceEmbedding(
-        model_name=all_emds[args.emd]['name'],
+        model_name=all_emds[args.emd],
         cache_folder="./",
-        embed_batch_size=all_emds[args.emd]['dim'],
+        embed_batch_size=128,
     )
     Settings.embed_model = embeding
 
